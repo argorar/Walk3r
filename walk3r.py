@@ -9,6 +9,7 @@ from reprint import output
 logging.basicConfig(level=logging.DEBUG, filename='logs.log',
                     format='%(asctime)s :: %(message)s',
                     filemode='w')
+current_version = "1.0.0"
 
 class Counter(dict):
     def __missing__(self, key):
@@ -35,16 +36,17 @@ def banner():
     print('░ ▓░▒ ▒   ▒▒   ▓▒█░░ ▒░▓  ░▒ ▒▒ ▓▒░░▒ ░░░░ ▒▓ ░▒▓░ ')
     print('  ▒ ░ ░    ▒   ▒▒ ░░ ░ ▒  ░░ ░▒ ▒░  ░ ░░  ░▒ ░ ▒░  ')
     print('  ░   ░    ░   ▒     ░ ░   ░ ░░ ░   ░   ░░   ░     ')
-    print('    ░          ░  ░    ░  ░░  ░     ░░   ░         ')
+    print(f'    ░          ░  ░    ░  ░░  ░     ░░   ░              v {current_version}')
     print(f'{bcolors.ENDC}')
 
 extensions = Counter()
 hash_dictionary = Counter()
 destiny = ''
 duplicates = 0
+files_size = 0
 
 def destiny_folder():
-    destiny = f'{os.getcwd()}'
+    destiny = f'{os.getcwd()}//duplicate'
     CHECK_FOLDER = os.path.isdir(destiny)
     # If folder doesn't exist, then create it.
     if not CHECK_FOLDER:
@@ -62,6 +64,7 @@ def argument():
     
 def show_file_formats():
     print(f'\nTotal files duplicated: {duplicates}\n')
+    print(f'\nTotal files size: {files_size/1024}KB\n')
     print('\nTotal files by format:\n')
     print ("{:<8} {:<10}".format('Format','Cuantity'))
     for key, value in extensions.items():
@@ -69,6 +72,7 @@ def show_file_formats():
 
 def scan(directory):
     global duplicates
+    global files_size
     with output(output_type='dict') as output_lines:   # default setting
         for directory_name, dirs, files in os.walk(directory, topdown=False):
             for file_mame in files:
@@ -83,7 +87,8 @@ def scan(directory):
 
                     if file_hash.hexdigest() in hash_dictionary:
                         logging.info(f'{file_path}\n')
-                        shutil.move(file_path, destiny + file_mame)
+                        files_size += os.stat(file_path).st_size
+                        shutil.move(file_path, destiny + 'duplicate//' + file_mame)
                         duplicates += 1
                     else:
                         hash_dictionary[file_hash.hexdigest()] = file_path
