@@ -25,4 +25,4 @@ At the end you will get a summary of total number of files, total size and total
 
 ## Download 
 
-Get the last version [here](https://github.com/argorar/Walk3r/releases/latest-)
+Get the last version [here](https://github.com/argorar/Walk3r/releases/latest)
