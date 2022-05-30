@@ -4,12 +4,13 @@ import os.path
 import sys
 import hashlib
 import shutil
+import requests
 from reprint import output
 
 logging.basicConfig(level=logging.DEBUG, filename='logs.log',
                     format='%(asctime)s :: %(message)s',
                     filemode='w')
-current_version = "1.0.0"
+current_version = "1.1.0"
 
 class Counter(dict):
     def __missing__(self, key):
@@ -25,6 +26,19 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+
+def clear():
+    # Clears command window
+    os.system('cls' if os.name == 'nt' else 'clear')
+    
+def version_check() -> None:
+    response = requests.get("https://api.github.com/repos/argorar/Walk3r/releases/latest")
+    latest_version = response.json()["tag_name"]
+    if latest_version > current_version:
+        print("A new version of Walk3r is available\n"
+            "Download it here: https://github.com/argorar/Walk3r/releases/latest\n")
+        input("To continue anyways press enter")
+        clear()
 
 def banner():
     print(f'{bcolors.OKCYAN}')
@@ -98,5 +112,6 @@ def scan(directory):
     show_file_formats()
 
 if __name__ == '__main__':
+    version_check()
     banner()
     argument()
