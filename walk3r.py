@@ -10,7 +10,7 @@ from reprint import output
 logging.basicConfig(level=logging.DEBUG, filename='logs.log',
                     format='%(asctime)s :: %(message)s',
                     filemode='w')
-current_version = "1.1.0"
+current_version = "1.1.1"
 
 class Counter(dict):
     def __missing__(self, key):
@@ -75,14 +75,19 @@ def argument():
         scan(directory)
     except:
         print(f'{bcolors.WARNING} Please pass directory {bcolors.ENDC}')
-    
+
+def truncate(number: float, max_decimals: int) -> float:
+    int_part, dec_part = str(number).split(".")
+    return float(".".join((int_part, dec_part[:max_decimals])))
+   
 def show_file_formats():
     print(f'\nTotal files duplicated: {duplicates}\n')
-    print(f'\nTotal files size: {files_size/1024}KB\n')
+    print(f'\nTotal files size: {truncate((files_size/1024)/1024, 2)} MB\n')
     print('\nTotal files by format:\n')
     print ("{:<8} {:<10}".format('Format','Cuantity'))
     for key, value in extensions.items():
         print ("{:<8} {:<10}".format(key, value))
+
 
 def scan(directory):
     global duplicates
@@ -93,7 +98,7 @@ def scan(directory):
                 file_path = os.path.join(directory_name, file_mame)
                 extension = os.path.splitext(file_mame)[1].replace('.', '')
                 extensions[extension] += 1
-                if extension == 'png' or extension == 'jpg' or extension == 'JPG' or extension == 'mp4':
+                if extension == 'png' or extension == 'jpg' or extension == 'JPG' or extension == 'mp4' or extension == 'mov' or extension == 'webm':
                     with open(file_path, "rb") as f:
                         file_hash = hashlib.blake2b()
                         while chunk := f.read(8192):
